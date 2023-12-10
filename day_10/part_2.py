@@ -1,4 +1,4 @@
-from day_10_input import value as puzzle_input
+from puzzle_input import value as puzzle_input
 import itertools
 
 lines = puzzle_input.splitlines()
@@ -83,8 +83,8 @@ Transition matrix
 state / elem .  |  -  L  7  J  F 
 outside      o  i  x  oa x  x  ob
 inside       i  o  x  ob x  x  oa
-on_pipe_a    x  x  oa x  i  o  x
-on_pipe_b    x  x  ob x  o  i  x
+on_pipe_a    x  x  oa x  i  o  x   on pipe with inside above
+on_pipe_b    x  x  ob x  o  i  x   on pipe with inside below
 """
 characters = ".|-L7JF"
 

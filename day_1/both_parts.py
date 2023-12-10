@@ -1,6 +1,6 @@
 import re
 
-from day_1_input import values as input_values
+from puzzle_input import values as input_values
 
 
 def spelled_to_int(number):

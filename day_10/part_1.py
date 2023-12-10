@@ -1,4 +1,4 @@
-from day_10_input import value as puzzle_input
+from puzzle_input import value as puzzle_input
 
 lines = puzzle_input.splitlines()
 
