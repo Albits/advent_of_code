@@ -48,4 +48,6 @@ for pattern in patterns:
         if check_y_mirror(lines, y_mirror, 0):
             y_mirrors.append(y_mirror)
 
+print(len(x_mirrors))
+print(len(y_mirrors))
 print(100*sum(x_mirrors) + sum(y_mirrors))
