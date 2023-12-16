@@ -1,6 +1,6 @@
 import itertools
 
-from sample_input import value as puzzle_input
+from puzzle_input import value as puzzle_input
 
 
 lines = puzzle_input.splitlines()
@@ -21,7 +21,7 @@ def get_possible_values_from_groups_sizes(groups, total_size, all_values: list, 
     for i in range(last_available_position + 1):
         current_value = get_binary_value(total_size - current_group - i, total_size - i)
         if len(groups) > 1:
-            get_possible_values_from_groups_sizes(groups[1:], total_size - current_group - 1, all_values, current_incremented_value + current_value)
+            get_possible_values_from_groups_sizes(groups[1:], total_size - current_group - 1 - i, all_values, current_incremented_value + current_value)
         else:
             all_values.append(current_incremented_value + current_value)
 
@@ -50,14 +50,16 @@ def get_unambiguous_values(possible_values, total_size):
     return unambiguous_springs_positions, unambiguous_dots_positions
 
 
+result = 0
+
 for line in lines:
     spring_map, groups_sizes = line.split()
-    print(spring_map)
+    # print(spring_map)
     map_size = len(spring_map)
     groups_sizes = [int(value) for value in groups_sizes.split(",")]
     possible_values_from_sizes = []
     get_possible_values_from_groups_sizes(groups_sizes, len(spring_map), possible_values_from_sizes, 0)
-    print([bin(value) for value in possible_values_from_sizes])
+    # print([bin(value) for value in possible_values_from_sizes])
     unambiguous_springs_positions, unambiguous_dots_positions = get_unambiguous_values(possible_values_from_sizes, map_size)
 
     spring_map = list(spring_map)
@@ -80,8 +82,10 @@ for line in lines:
         possible_values_from_map.append(current_value + spring_value)
 
     final_possible_values = [value for value in possible_values_from_map if value in possible_values_from_sizes]
-    print([bin(value) for value in final_possible_values])
-    print(len(final_possible_values))
+    # print([bin(value) for value in final_possible_values])
+    result += len(final_possible_values)
+
+print(result)
 
 
 """Possible values 3, 2, 1 len:
