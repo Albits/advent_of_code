@@ -1,6 +1,6 @@
 import itertools
 
-from puzzle_input import value as puzzle_input
+from sample_input import value as puzzle_input
 
 
 lines = puzzle_input.splitlines()
@@ -54,19 +54,19 @@ result = 0
 
 for line in lines:
     spring_map, groups_sizes = line.split()
-    # print(spring_map)
+    print(spring_map)
     map_size = len(spring_map)
     groups_sizes = [int(value) for value in groups_sizes.split(",")]
     possible_values_from_sizes = []
     get_possible_values_from_groups_sizes(groups_sizes, len(spring_map), possible_values_from_sizes, 0)
-    # print([bin(value) for value in possible_values_from_sizes])
-    unambiguous_springs_positions, unambiguous_dots_positions = get_unambiguous_values(possible_values_from_sizes, map_size)
-
-    spring_map = list(spring_map)
-    for index in unambiguous_springs_positions:
-        spring_map[index] = "#"
-    for index in unambiguous_dots_positions:
-        spring_map[index] = "."
+    print(len(possible_values_from_sizes))
+    # unambiguous_springs_positions, unambiguous_dots_positions = get_unambiguous_values(possible_values_from_sizes, map_size)
+    #
+    # spring_map = list(spring_map)
+    # for index in unambiguous_springs_positions:
+    #     spring_map[index] = "#"
+    # for index in unambiguous_dots_positions:
+    #     spring_map[index] = "."
 
     binary_powers_springs = [map_size - i - 1 for i in range(map_size) if spring_map[i] == "#"]
     spring_value = 0
@@ -80,9 +80,9 @@ for line in lines:
         for index, value in enumerate(current_set):
             current_value += 2**(binary_powers_questions[index]) * value
         possible_values_from_map.append(current_value + spring_value)
-
+    print(len(possible_values_from_map))
     final_possible_values = [value for value in possible_values_from_map if value in possible_values_from_sizes]
-    # print([bin(value) for value in final_possible_values])
+    print(len(final_possible_values))
     result += len(final_possible_values)
 
 print(result)
