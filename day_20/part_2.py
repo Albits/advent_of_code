@@ -42,20 +42,13 @@ for name, module in modules.items():
             modules[output].memory[name] = "low"
 
 (into_rx,) = [name for name, module in modules.items() if "rx" in module.outputs]
-pre_pre_rx = [name for name, module in modules.items() if into_rx in module.outputs]
-pre_pre_rx_counter = {}
-for key in pre_pre_rx:
-    pre_pre_rx_counter[key] = 0
-count_low = 0
-count_high = 0
-rx_reached = False
+pre_pre_rx_counter = {name: 0 for name, module in modules.items() if into_rx in module.outputs}
 press_counter = 0
 while not all(value != 0 for value in pre_pre_rx_counter.values()):
     rx_counter = 0
     press_counter += 1
     # Queue [origin, target, pulse]
     queue = deque([("broadcaster", dest, "low") for dest in broadcast_targets])
-    count_low += len(broadcast_targets) + 1
 
     while queue:
         origin, target, pulse = queue.popleft()
