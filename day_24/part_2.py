@@ -1,9 +1,9 @@
 import itertools
-from math import sqrt
+from math import sqrt, isclose
 
 from scipy.special import h1vp
 
-with open("sample_input.txt") as input_file:
+with open("puzzle_input.txt") as input_file:
     puzzle_input = input_file.read()
 
 hailstones = []
@@ -40,22 +40,55 @@ def normalize(vector):
     return x, y, z
 
 
-other_vector = tuple(a - b for a, b in zip(hailstones[2][0], hailstones[1][0]))
-normal_vector = vector_product(hailstones[1][1], other_vector)
+def crossing(h1, h2):
+    x1, y1, z1 = h1[0]
+    dx1, dy1, dz1 = h1[1]
+    x2, y2, z2 = h2[0]
+    dx2, dy2, dz2 = h2[1]
+
+    try:
+        left_term = (dx2 - dy2) / (dx1 - dy1) * ((y1 - y2) / dy2 - (x1 - x2) / dx2)
+        right_term = (dx2 - dz2) / (dx1 - dz1) * ((z1 - z2) / dz2 - (x1 - x2) / dx2)
+    except ZeroDivisionError:
+        return False
+
+    return isclose(left_term, right_term)
+
+
+# Find two parallel vectors
+solution_found = False
+for h1, h2 in itertools.combinations(hailstones, 2):
+    if isclose(abs(h1[1][0] / h2[1][0]), (h1[1][1] / h2[1][1])) and isclose(abs(h1[1][1] / h2[1][1]), (h1[1][2] / h2[1][2])):
+        print("Parallel found")
+        solution_found = True
+        break
+    elif crossing(h1, h2):
+        print("Crossing found")
+        solution_found = True
+        break
+
+
+assert solution_found, "Solution not found"
+
+other_vector = tuple(a - b for a, b in zip(h1[0], h2[0]))
+normal_vector = vector_product(h1[1], other_vector)
 # normal_vector = normalize(normal_vector)
 
 plan = get_plan_coordinates(normal_vector, hailstones[1][0])
 print(plan)
 
-h1 = hailstones[0]
-h2 = hailstones[4]
+forbidden_indices = [hailstones.index(h1), hailstones.index(h2)]
+forbidden_indices.sort()
+other_h1 = hailstones[forbidden_indices[0] - 1]
+other_h2 = hailstones[forbidden_indices[1] + 1]
+# h1 = hailstones[0]
+# h2 = hailstones[4]
 
-t1 = -(plan[0] * h1[0][0] + plan[1] * h1[0][1] + plan[2] * h1[0][2] + plan[3]) / (plan[0] * h1[1][0] + plan[1] * h1[1][1] + plan[2] * h1[1][2])
-t2 = -(plan[0] * h2[0][0] + plan[1] * h2[0][1] + plan[2] * h2[0][2] + plan[3]) / (plan[0] * h2[1][0] + plan[1] * h2[1][1] + plan[2] * h2[1][2])
+t1 = -(plan[0] * other_h1[0][0] + plan[1] * other_h1[0][1] + plan[2] * other_h1[0][2] + plan[3]) / (plan[0] * other_h1[1][0] + plan[1] * other_h1[1][1] + plan[2] * other_h1[1][2])
+t2 = -(plan[0] * other_h2[0][0] + plan[1] * other_h2[0][1] + plan[2] * other_h2[0][2] + plan[3]) / (plan[0] * other_h2[1][0] + plan[1] * other_h2[1][1] + plan[2] * other_h2[1][2])
 
-vect_coords = tuple((c2 + d2*t2 - c1 - d1*t1) / (t2 - t1) for c1, d1, c2, d2 in zip(*h1, *h2))
-origin_coords = tuple(c + t1 * (d - dr) for c, d, dr in zip(*h1, vect_coords))
-# x_coord = (h2[0][0] + h2[1][0] * t2 - h1[0][0] - h1[1][0] * t1) / (t2 - t1)
+vect_coords = tuple((c2 + d2*t2 - c1 - d1*t1) / (t2 - t1) for c1, d1, c2, d2 in zip(*other_h1, *other_h2))
+origin_coords = tuple(c + t1 * (d - dr) for c, d, dr in zip(*other_h1, vect_coords))
 print(vect_coords)
 print(origin_coords)
 
