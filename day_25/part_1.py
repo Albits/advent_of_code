@@ -17,7 +17,7 @@ for line in puzzle_input.splitlines():
 
 
 def get_shortest_path(begin, end):
-    seen = set(begin)
+    seen = {begin}
     current_nodes = [begin]
     visited_nodes = [[begin]]
 
@@ -36,6 +36,28 @@ def get_shortest_path(begin, end):
     return visited_nodes[current_nodes.index(end)]
 
 
+def count_nodes(begin):
+    seen = {begin}
+    current_nodes = [begin]
+    count = 1
+
+    while True:
+        next_nodes = []
+        break_loop = True
+        for node in current_nodes:
+            for destination in nodes[node]:
+                if destination not in seen:
+                    break_loop = False
+                    next_nodes.append(destination)
+                    seen.add(destination)
+                    count += 1
+        current_nodes = next_nodes
+        if break_loop:
+            break
+
+    return count
+
+
 vertices_count = defaultdict(int)
 for node_a, node_b in itertools.pairwise(nodes.keys()):
     visited_nodes = get_shortest_path(node_a, node_b)
@@ -45,4 +67,12 @@ for node_a, node_b in itertools.pairwise(nodes.keys()):
         vertices_count[tuple(vertices)] += 1
 vertices_count = {v: c for v, c in sorted(vertices_count.items(), key=lambda item: item[1], reverse=True)}
 
+del_vertices = [pair for pair in vertices_count.keys()][:3]
+print(del_vertices)
 
+for src, dest in del_vertices:
+    nodes[src].pop(nodes[src].index(dest))
+    nodes[dest].pop(nodes[dest].index(src))
+
+
+print(count_nodes(del_vertices[0][0]) * count_nodes(del_vertices[0][1]))
