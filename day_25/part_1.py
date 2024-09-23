@@ -59,7 +59,7 @@ def count_nodes(begin):
 
 
 vertices_count = defaultdict(int)
-for node_a, node_b in itertools.pairwise(nodes.keys()):
+for node_a, node_b in itertools.combinations(nodes.keys(), 2):
     visited_nodes = get_shortest_path(node_a, node_b)
     for va, vb in itertools.pairwise(visited_nodes):
         vertices = [va, vb]
